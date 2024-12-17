@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",function(){let e=document.querySelector(".header__hamburger"),t=document.querySelector(".header__main-nav");e&&t&&e.addEventListener("click",()=>{e.classList.toggle("active"),t.classList.toggle("open")})});

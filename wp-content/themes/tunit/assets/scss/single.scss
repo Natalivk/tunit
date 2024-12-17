@@ -1,0 +1,99 @@
+.single-movie {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-top: 80px;
+  margin-bottom: 50px;
+  width: 100%;
+
+  &__content-wrap {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    @media (max-width: 690px) {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+
+  &__title {
+    margin-bottom: 50px;
+  }
+
+  &__image {
+    position: relative;
+    box-sizing: border-box;
+    padding: 30px 20px;
+    background: #ffffff;
+    border-radius: 20px;
+    width: 40%;
+    box-shadow: 0px 6px 16px 0px #00000029;
+
+    img {
+      display: block;
+      max-width: 100%;
+      border-radius: 15px;
+      width: 100%;
+
+    }
+
+    @media (max-width: 690px) {
+      width: 100%;
+    }
+  }
+
+  &__content {
+    position: relative;
+    width: 55%;
+    @media (max-width: 690px) {
+      margin-top: 30px;
+      width: 100%;
+    }
+  }
+
+  &__year {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+  }
+
+  &__category {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  &__genre {
+    position: relative;
+    width: auto;
+    margin-right: 10px;
+  }
+
+  &__year-name {
+    position: relative;
+    width: auto;
+    margin-right: 10px;
+  }
+
+  &__description {
+    margin-top: 50px;
+    position: relative;
+    width: 100%;
+  }
+
+  &__date-release {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+
+  &__date-name {
+    position: relative;
+    width: auto;
+    margin-right: 10px;
+
+  }
+}

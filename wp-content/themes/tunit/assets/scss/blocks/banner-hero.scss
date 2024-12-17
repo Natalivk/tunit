@@ -1,0 +1,98 @@
+.banner-hero {
+  display: flex;
+  justify-content: center;
+  padding-top: 65px;
+  padding-bottom: 65px;
+  width: 100%;
+  background: $c-bg-main;
+  @include media('<920px') {
+    padding-top: 100px;
+  }
+  @include media('<720px') {
+    padding-top: 100px;
+  }
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    width: 100%;
+    @include media('<920px') {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__content {
+    width: 50%;
+    @include media('<920px') {
+      width: 100%;
+    }
+  }
+
+  &__image {
+    width: 565px;
+    max-width: 100%;
+    position: relative;
+    min-height: 416px;
+    @include media('<920px') {
+      margin-top: 40px;
+      min-height: 320px;
+    }
+    @include media('<460px') {
+      min-height: 270px;
+    }
+    @include media('<380px') {
+      min-height: 200px;
+    }
+
+    .img-cover {
+      object-fit: contain;
+
+    }
+  }
+
+  &__title {
+    @include media('<920px') {
+      text-align: center;
+      max-width: 100%;
+    }
+  }
+
+  &__text {
+    margin-top: 36px;
+    position: relative;
+    width: 100%;
+    font-family: $font-primary;
+    @include adaptive-font(18, 18);
+    line-height: 21.09px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: $c-font-secondary;
+    max-width: 391px;
+    @include media('<920px') {
+      text-align: center;
+      max-width: 100%;
+    }
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-top: 27px;
+    width: auto;
+    @include media('<920px') {
+      justify-content: center;
+    }
+  }
+
+  &__cta {
+    margin-right: 57px;
+    @include media('<920px') {
+      margin-right: 20px;
+    }
+  }
+}

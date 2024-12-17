@@ -1,0 +1,116 @@
+@use "sass:math";
+
+@mixin hover {
+    @media (hover: hover) {
+        &:hover {
+            @content;
+        }
+    }
+}
+
+@mixin hover-color($color) {
+    cursor: pointer;
+    transition: color .5s ease;
+    @include hover {
+        color: $color;
+    }
+}
+
+@mixin hover-fill($color) {
+    transition: fill .5s ease;
+    @include hover {
+        fill: $color;
+    }
+}
+
+@mixin hover-bg($color) {
+    transition: background-color .5s ease;
+    @include hover {
+        background-color: $color;
+    }
+}
+
+@mixin size($width, $height) {
+    width: $width;
+    height: $height;
+}
+
+@mixin img-wrap($width, $bg-color, $wrap-height) {
+    position: relative;
+    display: block;
+    width: $width;
+    background-color: $bg-color;
+    overflow: hidden;
+    &:before {
+        content: '';
+        display: block;
+        padding-bottom: $wrap-height;
+    }
+}
+
+@mixin cut-lines($line-count) {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: $line-count;
+    -webkit-box-orient: vertical;
+}
+
+@function strip-unit($number) {
+    @return math.div($number, ($number * 0 + 1));
+}
+
+@mixin adaptive-font($mobSize, $pcSize: $mobSize, $maxScr: $screen-design) {
+    $addSize: $pcSize - $mobSize;
+    $max-width: $maxScr - $screen-min;
+
+    font-size: calc(#{$mobSize}rem / 16 + #{$addSize} * ((100vw - #{$screen-min}) / #{strip-unit($max-width)}));
+
+    @include media('>=#{$maxScr}') {
+        font-size: calc(#{$pcSize} / 16 + rem);
+    }
+}
+
+@mixin text-underline($color: $c-brand-secondary, $thickness: 1px, $offset: 1px, $hover-color: $c-brand-secondary-hover) {
+    font-weight: 500;
+    color: $color;
+    text-decoration: underline $thickness solid currentColor;
+    -webkit-text-decoration: underline;
+    text-underline-offset: $offset;
+    transition: color .5s ease, text-decoration-color .5s ease;
+    
+    @include hover() {
+        color: $hover-color;
+        text-decoration-color: $hover-color;
+    }
+}
+
+@mixin fade-up($transformY: 0.5em, $transitionY: 0.75s, $transitionOpacity: 0.35s) {
+    body.home & {
+        opacity: 0;
+        transform: translate3d(0, $transformY, 0);
+        transition: transform $transitionY cubic-bezier(0.165, 0.84, 0.44, 1), opacity $transitionOpacity ease;
+        &.is-inview {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+}
+
+@mixin fade-up-hero($transformY, $transitionY, $transitionOpacity, $transitionDelay) {
+    $index: #{random(10)};
+    opacity: 0;
+    transform: translate3d(0, $transformY, 0);
+    animation:  fadeUpHero#{$index} $transitionY cubic-bezier(0.16, 1, 0.3, 1) forwards calc($hp-anim-delay + $transitionDelay),
+                fadeInHero#{$index} $transitionOpacity ease forwards calc($hp-anim-delay + $transitionDelay);
+    
+    @keyframes fadeUpHero#{$index} {
+        0% { transform: translate3d(0, $transformY, 0); }
+        100% { transform: translate3d(0, 0, 0); }
+    }
+
+    @keyframes fadeInHero#{$index} {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+}

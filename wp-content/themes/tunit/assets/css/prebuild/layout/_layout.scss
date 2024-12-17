@@ -1,0 +1,156 @@
+@use "core/core";@import "../vendor/reset";
+
+// Layout vars
+:root {
+  --content-gap: 2.65vw;
+  --content-gap-s: 2.4vw;
+  --content-gap-l: 11.806vw;
+
+  @include core.media('>=tablet', '<largescreen') {
+    --content-gap: 5.65vw;
+    --content-gap-s: 2.4vw;
+    --content-gap-l: 11.806vw;
+  }
+  @include core.media('>=largescreen', '<2kscreen') {
+    --content-gap: 5.65vw;
+    --content-gap-s: 1.1vw;
+    --content-gap-l: 11.806vw;
+  }
+
+  @include core.media('>=2kscreen') {
+    --content-gap: 8vw;
+    --content-gap-s: 1.1vw;
+    --content-gap-l: 11.806vw;
+  }
+}
+
+body {
+  width: 100%;
+  overflow: auto;
+}
+
+img,
+video,
+iframe {
+  vertical-align: bottom;
+}
+
+
+svg {
+  g,
+  path {
+    transform-box: fill-box;
+  }
+}
+
+.page-wrap {
+  position: relative;
+  width: 100%;
+  min-width: 320px;
+  max-width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+
+  &.not {
+    footer {
+      margin-top: 0;
+    }
+  }
+
+  section {
+    width: 100%;
+
+    & > div[class*="inner"] {
+      @include core.adaptive-font(35, 50); // as .block-title font-size
+    }
+  }
+}
+
+
+.inner {
+  position: relative;
+  max-width: 1248px;
+  box-sizing: border-box;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 52px;
+  @include core.media('<720px') {
+    margin-top: unset;
+  }
+}
+
+.col-start {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.col-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.in-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+
+.img-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  @include core.size(100%, 100%);
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.movie-item-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  min-width: 71px;
+  background: #ffffff;
+  background-clip: border-box;
+  border-radius: 27px;
+  border: 5px solid rgba(255, 255, 255, 0.6);;
+  background-clip: padding-box;
+  position: absolute;
+  top: 7px;
+  left: 10px;
+  padding: 5px 0;
+
+  p {
+    font-family: core.$font-secondary;
+    @include core.adaptive-font(14, 14);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    z-index: 1;
+
+  }
+
+  svg {
+    z-index: 1;
+    margin-left: 4px;
+  }
+
+  &.post {
+    top: 51px;
+    left: 30px;
+  }
+}

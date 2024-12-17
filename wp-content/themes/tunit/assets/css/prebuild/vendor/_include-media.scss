@@ -1,0 +1,566 @@
+@use "core/core";@charset "UTF-8";
+
+//     _            _           _                           _ _
+//    (_)          | |         | |                         | (_)
+//     _ _ __   ___| |_   _  __| | ___   _ __ ___   ___  __| |_  __ _
+//    | | '_ \ / __| | | | |/ _` |/ _ \ | '_ ` _ \ / _ \/ _` | |/ _` |
+//    | | | | | (__| | |_| | (_| |  __/ | | | | | |  __/ (_| | | (_| |
+//    |_|_| |_|\___|_|\__,_|\__,_|\___| |_| |_| |_|\___|\__,_|_|\__,_|
+//
+//      Simple, elegant and maintainable media queries in Sass
+//                        v1.4.9
+//
+//        https://eduardoboucas.github.io/include-media
+//
+//         Authors: Eduardo Boucas (@eduardoboucas)
+//                  Kitty Giraudel (@kittygiraudel)
+//
+//      This project is licensed under the terms of the MIT license
+////
+/// include-media library public configuration
+/// @author Eduardo Boucas
+/// @access public
+////
+
+
+///
+/// Creates a list of global breakpoints
+///
+/// @example scss - Creates a single breakpoint with the label `phone`
+///  core.$breakpoints: ('phone': 320px);
+///
+core.$breakpoints: (
+        'phone': 320px,
+        'tablet': 768px,
+        'desktop': 1024px
+) !default;
+
+
+///
+/// Creates a list of static expressions or media types
+///
+/// @example scss - Creates a single media type (screen)
+///  core.$media-expressions: ('screen': 'screen');
+///
+/// @example scss - Creates a static expression with logical disjunction (OR operator)
+///  core.$media-expressions: (
+///    'retina2x': '(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)'
+///  );
+///
+core.$media-expressions: (
+        'screen': 'screen',
+        'print': 'print',
+        'handheld': 'handheld',
+        'landscape': '(orientation: landscape)',
+        'portrait': '(orientation: portrait)',
+        'retina2x': '(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (min-resolution: 2dppx)',
+        'retina3x': '(-webkit-min-device-pixel-ratio: 3), (min-resolution: 350dpi), (min-resolution: 3dppx)'
+) !default;
+
+
+///
+/// Defines a number to be added or subtracted from each unit when declaring breakpoints with exclusive intervals
+///
+/// @example scss - Interval for pixels is defined as `1` by default
+///  @include core.media('>128px') {}
+///
+///  /* Generates: */
+///  @media (min-width: 129px) {}
+///
+/// @example scss - Interval for ems is defined as `0.01` by default
+///  @include core.media('>20em') {}
+///
+///  /* Generates: */
+///  @media (min-width: 20.01em) {}
+///
+/// @example scss - Interval for rems is defined as `0.1` by default, to be used with `font-size: 62.5%;`
+///  @include core.media('>2.0rem') {}
+///
+///  /* Generates: */
+///  @media (min-width: 2.1rem) {}
+///
+core.$unit-intervals: (
+        'px': 1,
+        'em': 0.01,
+        'rem': 0.1,
+        '': 0
+) !default;
+
+///
+/// Defines whether support for media queries is available, useful for creating separate stylesheets
+/// for browsers that don't support media queries.
+///
+/// @example scss - Disables support for media queries
+///  core.$im-media-support: false;
+///  @include core.media('>=tablet') {
+///    .foo {
+///      color: tomato;
+///    }
+///  }
+///
+///  /* Generates: */
+///  .foo {
+///    color: tomato;
+///  }
+///
+core.$im-media-support: true !default;
+
+///
+/// Selects which breakpoint to emulate when support for media queries is disabled. Media queries that start at or
+/// intercept the breakpoint will be displayed, any others will be ignored.
+///
+/// @example scss - This media query will show because it intercepts the static breakpoint
+///  core.$im-media-support: false;
+///  core.$im-no-media-breakpoint: 'desktop';
+///  @include core.media('>=tablet') {
+///    .foo {
+///      color: tomato;
+///    }
+///  }
+///
+///  /* Generates: */
+///  .foo {
+///    color: tomato;
+///  }
+///
+/// @example scss - This media query will NOT show because it does not intercept the desktop breakpoint
+///  core.$im-media-support: false;
+///  core.$im-no-media-breakpoint: 'tablet';
+///  @include core.media('>=desktop') {
+///    .foo {
+///      color: tomato;
+///    }
+///  }
+///
+///  /* No output */
+///
+core.$im-no-media-breakpoint: 'desktop' !default;
+
+///
+/// Selects which media expressions are allowed in an expression for it to be used when media queries
+/// are not supported.
+///
+/// @example scss - This media query will show because it intercepts the static breakpoint and contains only accepted media expressions
+///  core.$im-media-support: false;
+///  core.$im-no-media-breakpoint: 'desktop';
+///  core.$im-no-media-expressions: ('screen');
+///  @include core.media('>=tablet', 'screen') {
+///    .foo {
+///      color: tomato;
+///    }
+///  }
+///
+///   /* Generates: */
+///   .foo {
+///     color: tomato;
+///   }
+///
+/// @example scss - This media query will NOT show because it intercepts the static breakpoint but contains a media expression that is not accepted
+///  core.$im-media-support: false;
+///  core.$im-no-media-breakpoint: 'desktop';
+///  core.$im-no-media-expressions: ('screen');
+///  @include core.media('>=tablet', 'retina2x') {
+///    .foo {
+///      color: tomato;
+///    }
+///  }
+///
+///  /* No output */
+///
+core.$im-no-media-expressions: ('screen', 'portrait', 'landscape') !default;
+
+////
+/// Cross-engine logging engine
+/// @author Kitty Giraudel
+/// @access private
+////
+
+
+///
+/// Log a message either with `@error` if supported
+/// else with `@warn`, using `feature-exists('at-error')`
+/// to detect support.
+///
+/// @param {String} core.$message - Message to log
+///
+@function im-log(core.$message) {
+  @if feature-exists('at-error') {
+    @error core.$message;
+  } @else {
+    @warn core.$message;
+    core.$_: noop();
+  }
+  
+  @return core.$message;
+}
+
+
+///
+/// Wrapper mixin for the log function so it can be used with a more friendly
+/// API than `@if im-log('..') {}` or `core.$_: im-log('..')`. Basically, use the function
+/// within functions because it is not possible to include a mixin in a function
+/// and use the mixin everywhere else because it's much more elegant.
+///
+/// @param {String} core.$message - Message to log
+///
+@mixin log(core.$message) {
+  @if im-log(core.$message) {}
+}
+
+
+///
+/// Function with no `@return` called next to `@warn` in Sass 3.3
+/// to trigger a compiling error and stop the process.
+///
+@function noop() {}
+
+///
+/// Determines whether a list of conditions is intercepted by the static breakpoint.
+///
+/// @param {Arglist}   core.$conditions  - Media query conditions
+///
+/// @return {Boolean} - Returns true if the conditions are intercepted by the static breakpoint
+///
+@function im-intercepts-static-breakpoint(core.$conditions...) {
+  core.$no-media-breakpoint-value: map-get(core.$breakpoints, core.$im-no-media-breakpoint);
+  
+  @if not core.$no-media-breakpoint-value {
+    @if im-log('`#{core.$im-no-media-breakpoint}` is not a valid breakpoint.') {}
+  }
+  
+  @each core.$condition in core.$conditions {
+    @if not map-has-key(core.$media-expressions, core.$condition) {
+      core.$operator: get-expression-operator(core.$condition);
+      core.$prefix: get-expression-prefix(core.$operator);
+      core.$value: get-expression-value(core.$condition, core.$operator);
+      
+      @if (core.$prefix == 'max' and core.$value <= core.$no-media-breakpoint-value) or
+          (core.$prefix == 'min' and core.$value > core.$no-media-breakpoint-value) {
+        @return false;
+      }
+    } @else if not index(core.$im-no-media-expressions, core.$condition) {
+      @return false;
+    }
+  }
+  
+  @return true;
+}
+
+////
+/// Parsing engine
+/// @author Kitty Giraudel
+/// @access private
+////
+
+
+///
+/// Get operator of an expression
+///
+/// @param {String} core.$expression - Expression to extract operator from
+///
+/// @return {String} - Any of `>=`, `>`, `<=`, `<`, `≥`, `≤`
+///
+@function get-expression-operator(core.$expression) {
+  @each core.$operator in ('>=', '>', '<=', '<', '≥', '≤') {
+    @if str-index(core.$expression, core.$operator) {
+      @return core.$operator;
+    }
+  }
+  
+  // It is not possible to include a mixin inside a function, so we have to
+  // rely on the `im-log(..)` function rather than the `log(..)` mixin. Because
+  // functions cannot be called anywhere in Sass, we need to hack the call in
+  // a dummy variable, such as `core.$_`. If anybody ever raise a scoping issue with
+  // Sass 3.3, change this line in `@if im-log(..) {}` instead.
+  core.$_: im-log('No operator found in `#{core.$expression}`.');
+}
+
+
+///
+/// Get dimension of an expression, based on a found operator
+///
+/// @param {String} core.$expression - Expression to extract dimension from
+/// @param {String} core.$operator - Operator from `core.$expression`
+///
+/// @return {String} - `width` or `height` (or potentially anything else)
+///
+@function get-expression-dimension(core.$expression, core.$operator) {
+  core.$operator-index: str-index(core.$expression, core.$operator);
+  core.$parsed-dimension: str-slice(core.$expression, 0, core.$operator-index - 1);
+  core.$dimension: 'width';
+  
+  @if str-length(core.$parsed-dimension) > 0 {
+    core.$dimension: core.$parsed-dimension;
+  }
+  
+  @return core.$dimension;
+}
+
+
+///
+/// Get dimension prefix based on an operator
+///
+/// @param {String} core.$operator - Operator
+///
+/// @return {String} - `min` or `max`
+///
+@function get-expression-prefix(core.$operator) {
+  @return if(index(('<', '<=', '≤'), core.$operator), 'max', 'min');
+}
+
+
+///
+/// Get value of an expression, based on a found operator
+///
+/// @param {String} core.$expression - Expression to extract value from
+/// @param {String} core.$operator - Operator from `core.$expression`
+///
+/// @return {Number} - A numeric value
+///
+@function get-expression-value(core.$expression, core.$operator) {
+  core.$operator-index: str-index(core.$expression, core.$operator);
+  core.$value: str-slice(core.$expression, core.$operator-index + str-length(core.$operator));
+  
+  @if map-has-key(core.$breakpoints, core.$value) {
+    core.$value: map-get(core.$breakpoints, core.$value);
+  } @else {
+    core.$value: to-number(core.$value);
+  }
+  
+  core.$interval: map-get(core.$unit-intervals, unit(core.$value));
+  
+  @if not core.$interval {
+    // It is not possible to include a mixin inside a function, so we have to
+    // rely on the `im-log(..)` function rather than the `log(..)` mixin. Because
+    // functions cannot be called anywhere in Sass, we need to hack the call in
+    // a dummy variable, such as `core.$_`. If anybody ever raise a scoping issue with
+    // Sass 3.3, change this line in `@if im-log(..) {}` instead.
+    core.$_: im-log('Unknown unit `#{unit(core.$value)}`.');
+  }
+  
+  @if core.$operator == '>' {
+    core.$value: core.$value + core.$interval;
+  } @else if core.$operator == '<' {
+    core.$value: core.$value - core.$interval;
+  }
+  
+  @return core.$value;
+}
+
+
+///
+/// Parse an expression to return a valid media-query expression
+///
+/// @param {String} core.$expression - Expression to parse
+///
+/// @return {String} - Valid media query
+///
+@function parse-expression(core.$expression) {
+  // If it is part of core.$media-expressions, it has no operator
+  // then there is no need to go any further, just return the value
+  @if map-has-key(core.$media-expressions, core.$expression) {
+    @return map-get(core.$media-expressions, core.$expression);
+  }
+  
+  core.$operator: get-expression-operator(core.$expression);
+  core.$dimension: get-expression-dimension(core.$expression, core.$operator);
+  core.$prefix: get-expression-prefix(core.$operator);
+  core.$value: get-expression-value(core.$expression, core.$operator);
+  
+  @return '(#{core.$prefix}-#{core.$dimension}: #{core.$value})';
+}
+
+///
+/// Slice `core.$list` between `core.$start` and `core.$end` indexes
+///
+/// @access private
+///
+/// @param {List} core.$list - List to slice
+/// @param {Number} core.$start [1] - Start index
+/// @param {Number} core.$end [length(core.$list)] - End index
+///
+/// @return {List} Sliced list
+///
+@function slice(core.$list, core.$start: 1, core.$end: length(core.$list)) {
+  @if length(core.$list) < 1 or core.$start > core.$end {
+    @return ();
+  }
+  
+  core.$result: ();
+  
+  @for core.$i from core.$start through core.$end {
+    core.$result: append(core.$result, nth(core.$list, core.$i));
+  }
+  
+  @return core.$result;
+}
+
+////
+/// String to number converter
+/// @author Kitty Giraudel
+/// @access private
+////
+
+
+///
+/// Casts a string into a number
+///
+/// @param {String | Number} core.$value - Value to be parsed
+///
+/// @return {Number}
+///
+@function to-number(core.$value) {
+  @if type-of(core.$value) == 'number' {
+    @return core.$value;
+  } @else if type-of(core.$value) != 'string' {
+    core.$_: im-log('Value for `to-number` should be a number or a string.');
+  }
+  
+  core.$first-character: str-slice(core.$value, 1, 1);
+  core.$result: 0;
+  core.$digits: 0;
+  core.$minus: (core.$first-character == '-');
+  core.$numbers: ('0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9);
+  
+  // Remove +/- sign if present at first character
+  @if (core.$first-character == '+' or core.$first-character == '-') {
+    core.$value: str-slice(core.$value, 2);
+  }
+  
+  @for core.$i from 1 through str-length(core.$value) {
+    core.$character: str-slice(core.$value, core.$i, core.$i);
+    
+    @if not (index(map-keys(core.$numbers), core.$character) or core.$character == '.') {
+      @return to-length(if(core.$minus, -core.$result, core.$result), str-slice(core.$value, core.$i))
+    }
+    
+    @if core.$character == '.' {
+      core.$digits: 1;
+    } @else if core.$digits == 0 {
+      core.$result: core.$result * 10 + map-get(core.$numbers, core.$character);
+    } @else {
+      core.$digits: core.$digits * 10;
+      core.$result: core.$result + map-get(core.$numbers, core.$character) / core.$digits;
+    }
+  }
+  
+  @return if(core.$minus, -core.$result, core.$result);
+}
+
+
+///
+/// Add `core.$unit` to `core.$value`
+///
+/// @param {Number} core.$value - Value to add unit to
+/// @param {String} core.$unit - String representation of the unit
+///
+/// @return {Number} - `core.$value` expressed in `core.$unit`
+///
+@function to-length(core.$value, core.$unit) {
+  core.$units: ('px': 1px, 'cm': 1cm, 'mm': 1mm, '%': 1%, 'ch': 1ch, 'pc': 1pc, 'in': 1in, 'em': 1em, 'rem': 1rem, 'pt': 1pt, 'ex': 1ex, 'vw': 1vw, 'vh': 1vh, 'vmin': 1vmin, 'vmax': 1vmax);
+  
+  @if not index(map-keys(core.$units), core.$unit) {
+    core.$_: im-log('Invalid unit `#{core.$unit}`.');
+  }
+  
+  @return core.$value * map-get(core.$units, core.$unit);
+}
+
+///
+/// This mixin aims at redefining the configuration just for the scope of
+/// the call. It is helpful when having a component needing an extended
+/// configuration such as custom breakpoints (referred to as tweakpoints)
+/// for instance.
+///
+/// @author Kitty Giraudel
+///
+/// @param {Map} core.$tweakpoints [()] - Map of tweakpoints to be merged with `core.$breakpoints`
+/// @param {Map} core.$tweak-media-expressions [()] - Map of tweaked media expressions to be merged with `core.$media-expression`
+///
+/// @example scss - Extend the global breakpoints with a tweakpoint
+///  @include core.media-context(('custom': 678px)) {
+///    .foo {
+///      @include core.media('>phone', '<=custom') {
+///       // ...
+///      }
+///    }
+///  }
+///
+/// @example scss - Extend the global media expressions with a custom one
+///  @include core.media-context(core.$tweak-media-expressions: ('all': 'all')) {
+///    .foo {
+///      @include core.media('all', '>phone') {
+///       // ...
+///      }
+///    }
+///  }
+///
+/// @example scss - Extend both configuration maps
+///  @include core.media-context(('custom': 678px), ('all': 'all')) {
+///    .foo {
+///      @include core.media('all', '>phone', '<=custom') {
+///       // ...
+///      }
+///    }
+///  }
+///
+@mixin media-context(core.$tweakpoints: (), core.$tweak-media-expressions: ()) {
+  // Save global configuration
+  core.$global-breakpoints: core.$breakpoints;
+  core.$global-media-expressions: core.$media-expressions;
+  
+  // Update global configuration
+  core.$breakpoints: map-merge(core.$breakpoints, core.$tweakpoints) !global;
+  core.$media-expressions: map-merge(core.$media-expressions, core.$tweak-media-expressions) !global;
+  
+  @content;
+  
+  // Restore global configuration
+  core.$breakpoints: core.$global-breakpoints !global;
+  core.$media-expressions: core.$global-media-expressions !global;
+}
+
+////
+/// include-media public exposed API
+/// @author Eduardo Boucas
+/// @access public
+////
+
+
+///
+/// Generates a media query based on a list of conditions
+///
+/// @param {Arglist}   core.$conditions  - Media query conditions
+///
+/// @example scss - With a single set breakpoint
+///  @include core.media('>phone') { }
+///
+/// @example scss - With two set breakpoints
+///  @include core.media('>phone', '<=tablet') { }
+///
+/// @example scss - With custom values
+///  @include core.media('>=358px', '<850px') { }
+///
+/// @example scss - With set breakpoints with custom values
+///  @include core.media('>desktop', '<=1350px') { }
+///
+/// @example scss - With a static expression
+///  @include core.media('retina2x') { }
+///
+/// @example scss - Mixing everything
+///  @include core.media('>=350px', '<tablet', 'retina3x') { }
+///
+@mixin media(core.$conditions...) {
+  @if (core.$im-media-support and length(core.$conditions) == 0) or
+      (not core.$im-media-support and im-intercepts-static-breakpoint(core.$conditions...)) {
+    @content;
+  } @else if (core.$im-media-support and length(core.$conditions) > 0) {
+    @media #{unquote(parse-expression(nth(core.$conditions, 1)))} {
+      // Recursive call
+      core.$sliced-conditions: slice(core.$conditions, 2);
+      @include core.media(core.$sliced-conditions...) {
+        @content;
+      }
+    }
+  }
+}

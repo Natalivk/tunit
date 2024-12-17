@@ -1,0 +1,80 @@
+@use "core/core";// Brand
+core.$c-brand-primary: #FF902B;
+
+core.$c-brand-primary-hover: #FF902B;
+core.$c-brand-secondary: #FF902B;
+core.$c-brand-secondary-hover: #FF902B;
+
+// Background
+core.$c-bg-primary: #FFFFFF;
+core.$c-bg-main: #F6EBDA;
+core.$c-bg-secondary: #2F2105;
+core.$c-bg-tertiary: #17181C;
+core.$c-bg-border: #E2E5EB;
+
+core.$hover: #FF902B;
+
+
+core.$hamburger-color: #FF902B; // Adjust as needed
+core.$menu-background: #fff; // Background color for the dropdown menu
+core.$shadow-color: rgba(0, 0, 0, 0.2); // Shadow color
+// Fonts
+core.$font-primary: Roboto, Helvetica, Arial, sans-serif;
+core.$font-secondary: Popins, Helvetica, Arial, sans-serif;
+core.$c-font-primary: #2F2105;
+core.$c-font-secondary: #7E7D7A;
+core.$c-font-tertiary: #FFFFFF;
+core.$c-font-link: #F4AE26;
+
+//header
+
+// Other
+
+// Media Queries
+core.$screen-min: 375px !default;
+core.$screen-design: 1440px !default;
+
+core.$desktop-hover: 1025px;
+core.$desktop-animation: 1025px;
+
+core.$screen-xs: 530px !default;
+core.$screen-xs-min: core.$screen-xs !default;
+core.$screen-phone: core.$screen-xs-min !default;
+
+core.$screen-ph: 600px !default;
+
+core.$screen-sm: 768px !default;
+core.$screen-sm-min: core.$screen-sm !default;
+core.$screen-tablet: core.$screen-sm-min !default;
+
+core.$screen-md: 1024px !default;
+core.$screen-md-min: core.$screen-md !default;
+core.$screen-desktop: core.$screen-md-min !default;
+
+core.$screen-lg: 1280px !default;
+core.$screen-lg-min: core.$screen-lg !default;
+core.$screen-lg-desktop: core.$screen-lg-min !default;
+
+core.$screen-xl: 1440px !default;
+core.$screen-xxl: 1860px;
+core.$screen-xxxl: 2000px;
+
+// So media queries don't overlap when required, provide a maximum
+core.$screen-xs-max: (core.$screen-sm-min - 1) !default;
+core.$screen-sm-max: (core.$screen-md-min - 1) !default;
+core.$screen-md-max: (core.$screen-lg-min - 1) !default;
+
+// Media queries breakpoints
+core.$breakpoints: (
+        'phone': core.$screen-xs,
+        'phablet': core.$screen-ph,
+        'tablet': core.$screen-sm,
+        'desktop': core.$screen-md,
+        'widescreen': core.$screen-lg,
+        'largescreen': core.$screen-xl,
+        'hdscreen' : core.$screen-xxl,
+        '2kscreen' : core.$screen-xxxl,
+        'desktop-anim': core.$desktop-animation,
+        'desktop-hover': core.$desktop-hover,
+        'screen-design': core.$screen-design
+);

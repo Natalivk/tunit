@@ -1,0 +1,34 @@
+@use "core/core";@mixin font-face(core.$name, core.$path, core.$weight: null, core.$style: null, core.$exts: woff2 woff) {
+  core.$src: null;
+
+  core.$extmods: (
+          eot: "?",
+          svg: "#" + str-replace(core.$name, " ", "_")
+  );
+
+  core.$formats: (
+          otf: "opentype",
+          ttf: "truetype"
+  );
+
+  @each core.$ext in core.$exts {
+    core.$extmod: if(map-has-key(core.$extmods, core.$ext), core.$ext + map-get(core.$extmods, core.$ext), core.$ext);
+    core.$format: if(map-has-key(core.$formats, core.$ext), map-get(core.$formats, core.$ext), core.$ext);
+    core.$src: append(core.$src, url(quote(core.$path + "." + core.$extmod)) format(quote(core.$format)), comma);
+  }
+
+  @font-face {
+    font-family: quote(core.$name);
+    font-style: core.$style;
+    font-weight: core.$weight;
+    src: core.$src;
+    font-display: swap;
+  }
+}
+
+core.$main-font-path: '/wp-content/themes/tunit/assets/fonts';
+
+@include core.font-face('Roboto', '#{core.$main-font-path}/Roboto/Roboto-Regular', 400, normal, woff2);
+@include core.font-face('Roboto', '#{core.$main-font-path}/Roboto/Roboto-Medium', 500, normal, woff2);
+@include core.font-face('Popins', '#{core.$main-font-path}/Popins/Poppins-SemiBold', 600, normal, woff2);
+@include core.font-face('Popins', '#{core.$main-font-path}/Popins/Poppins-Bold', 700, normal, woff2);

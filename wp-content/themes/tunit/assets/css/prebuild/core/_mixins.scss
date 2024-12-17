@@ -1,0 +1,116 @@
+@use "core/core";@use "sass:math";
+
+@mixin hover {
+    @media (hover: hover) {
+        &:hover {
+            @content;
+        }
+    }
+}
+
+@mixin hover-color(core.$color) {
+    cursor: pointer;
+    transition: color .5s ease;
+    @include core.hover {
+        color: core.$color;
+    }
+}
+
+@mixin hover-fill(core.$color) {
+    transition: fill .5s ease;
+    @include core.hover {
+        fill: core.$color;
+    }
+}
+
+@mixin hover-bg(core.$color) {
+    transition: background-color .5s ease;
+    @include core.hover {
+        background-color: core.$color;
+    }
+}
+
+@mixin size(core.$width, core.$height) {
+    width: core.$width;
+    height: core.$height;
+}
+
+@mixin img-wrap(core.$width, core.$bg-color, core.$wrap-height) {
+    position: relative;
+    display: block;
+    width: core.$width;
+    background-color: core.$bg-color;
+    overflow: hidden;
+    &:before {
+        content: '';
+        display: block;
+        padding-bottom: core.$wrap-height;
+    }
+}
+
+@mixin cut-lines(core.$line-count) {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: core.$line-count;
+    -webkit-box-orient: vertical;
+}
+
+@function strip-unit(core.$number) {
+    @return math.div(core.$number, (core.$number * 0 + 1));
+}
+
+@mixin adaptive-font(core.$mobSize, core.$pcSize: core.$mobSize, core.$maxScr: core.$screen-design) {
+    core.$addSize: core.$pcSize - core.$mobSize;
+    core.$max-width: core.$maxScr - core.$screen-min;
+
+    font-size: calc(#{core.$mobSize}rem / 16 + #{core.$addSize} * ((100vw - #{core.$screen-min}) / #{strip-unit(core.$max-width)}));
+
+    @include core.media('>=#{core.$maxScr}') {
+        font-size: calc(#{core.$pcSize} / 16 + rem);
+    }
+}
+
+@mixin text-underline(core.$color: core.$c-brand-secondary, core.$thickness: 1px, core.$offset: 1px, core.$hover-color: core.$c-brand-secondary-hover) {
+    font-weight: 500;
+    color: core.$color;
+    text-decoration: underline core.$thickness solid currentColor;
+    -webkit-text-decoration: underline;
+    text-underline-offset: core.$offset;
+    transition: color .5s ease, text-decoration-color .5s ease;
+    
+    @include core.hover() {
+        color: core.$hover-color;
+        text-decoration-color: core.$hover-color;
+    }
+}
+
+@mixin fade-up(core.$transformY: 0.5em, core.$transitionY: 0.75s, core.$transitionOpacity: 0.35s) {
+    body.home & {
+        opacity: 0;
+        transform: translate3d(0, core.$transformY, 0);
+        transition: transform core.$transitionY cubic-bezier(0.165, 0.84, 0.44, 1), opacity core.$transitionOpacity ease;
+        &.is-inview {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+}
+
+@mixin fade-up-hero(core.$transformY, core.$transitionY, core.$transitionOpacity, core.$transitionDelay) {
+    core.$index: #{random(10)};
+    opacity: 0;
+    transform: translate3d(0, core.$transformY, 0);
+    animation:  fadeUpHero#{core.$index} core.$transitionY cubic-bezier(0.16, 1, 0.3, 1) forwards calc(core.$hp-anim-delay + core.$transitionDelay),
+                fadeInHero#{core.$index} core.$transitionOpacity ease forwards calc(core.$hp-anim-delay + core.$transitionDelay);
+    
+    @keyframes fadeUpHero#{core.$index} {
+        0% { transform: translate3d(0, core.$transformY, 0); }
+        100% { transform: translate3d(0, 0, 0); }
+    }
+
+    @keyframes fadeInHero#{core.$index} {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+}

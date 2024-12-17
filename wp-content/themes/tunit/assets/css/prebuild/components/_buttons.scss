@@ -1,0 +1,169 @@
+@use "core/core";.btn {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: core.$font-secondary;
+  color: core.$c-font-tertiary;
+  @include core.adaptive-font(14);
+  font-weight: 600;
+  line-height: 21px;
+  text-transform: uppercase;
+  text-align: center;
+  border: none;
+  border-radius: 32px;
+  outline: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  z-index: 0;
+  padding: 12px 32px;
+  box-shadow: 0px 4px 32px 0px #DFC37C40;
+
+  transition: background-color .5s ease, opacity .5s ease;
+  @include core.hover() {
+    background: core.$hover;
+  }
+
+  &:after {
+    @extend %abs-full;
+    content: '';
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+    transition: opacity .5s ease;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &.btn-s {
+    min-height: 3.2142857142857144em;
+  }
+
+
+  @include core.media('>=2kscreen') {
+    @include core.adaptive-font(14, 16);
+  }
+}
+
+.btn-primary {
+  @extend .btn;
+  background-color: core.$c-bg-secondary;
+
+  &:after {
+    background-color: core.$c-brand-primary;
+  }
+}
+
+.btn-link {
+  font-family: core.$font-secondary;
+  @include core.adaptive-font(12);
+  font-weight: 700;
+  line-height: 18px;
+  color: core.$c-brand-primary;
+  transition: color .3s ease-in-out;
+
+  &:hover {
+    color: core.$c-bg-secondary;
+  }
+
+}
+
+.btn-black {
+  @extend .btn;
+  color: core.$c-brand-primary;
+  background-color: core.$c-bg-tertiary;
+
+  &:after {
+    background-color: core.$c-bg-tertiary;
+  }
+}
+
+.btn-secondary {
+  font-family: core.$font-primary;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 14.06px;
+  text-align: center;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  box-sizing: border-box;
+  color: core.$c-brand-primary;
+  padding: 8px 16px;
+  border: 2px solid core.$c-brand-primary;
+  border-radius: 33px;
+  transition: color .3s ease-in-out;
+
+  &:hover {
+    color: core.$c-font-primary;
+    border: 2px solid core.$c-font-primary;
+  }
+
+}
+
+.btn-tertiary {
+  @extend .btn;
+  background-color: core.$c-bg-primary;
+
+  &:after {
+    background-color: core.$c-bg-secondary;
+  }
+}
+
+.btn-nav {
+  @extend %btn-clear-icon;
+  position: relative;
+  display: flex;
+  @include core.adaptive-font(27, 39);
+  @include core.size(1em, 1em);
+  transition: opacity .35s ease;
+
+  &[disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  &__icon,
+  &__bg {
+    @extend %abs-full;
+    transition: fill .5s ease;
+  }
+
+  &__icon {
+    fill: core.$c-brand-secondary;
+    stroke: #B7BBCC;
+    z-index: 1;
+  }
+
+  &__bg {
+    fill: rgba(core.$c-brand-secondary, 0);
+  }
+
+  @include core.hover() {
+    .btn-nav__icon {
+      fill: core.$c-bg-primary;
+    }
+
+    .btn-nav__bg {
+      fill: core.$c-brand-secondary;
+    }
+  }
+}
+
+.btn-nav-row {
+  display: flex;
+
+  & > button {
+    margin: 0 1px;
+  }
+}
+
+.btn-nav-col {
+  & > button {
+    margin: 1px 0;
+  }
+}

@@ -1,0 +1,35 @@
+@use "core/core";%abs-full {
+    position: absolute;
+    top: 0;
+    left: 0;
+    @include core.size(100%, 100%);
+}
+
+%font-inherit {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+}
+
+%btn-clear {   
+    border: 0;
+    outline: 0;
+    box-shadow: none;    
+    appearance: none;
+    cursor: pointer;	
+}
+
+%btn-clear-icon {
+    background-color: transparent;
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
